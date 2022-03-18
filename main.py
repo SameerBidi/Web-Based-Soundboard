@@ -3,10 +3,11 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 from pygame import mixer
 import flask
-from flask import request, render_template
+from flask import request, render_template, send_from_directory
 from flask_cors import CORS
 import os
 import sys
+from pathlib import Path
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -31,10 +32,22 @@ def playSoundThroughMic():
 def load_index():
 	sounds = []
 	for sound_file in os.listdir("sounds"):
+		sound_dict = {}
 		if sound_file.endswith(".wav"):
-			sounds.append(sound_file)
-			print(sound_file)
+			sound_name = Path(sound_file).stem
+			sound_dict["name"] = sound_name
+			sound_dict["path"] = sound_file
+			for thumbnail_file in os.listdir("thumbnails"):
+				thumbnail_name = Path(thumbnail_file).stem
+				if thumbnail_name == sound_name:
+					sound_dict["thumbnail"] = thumbnail_file
+			sounds.append(sound_dict)
+			print(sounds)
 	return render_template("index.html", sounds=sounds)
+
+@app.route('/thumbnails/<path:thumbnail_name>')
+def send_report(thumbnail_name):
+    return send_from_directory('thumbnails', thumbnail_name)
 
 @app.route('/playSound', methods=["GET"])
 def playSound():

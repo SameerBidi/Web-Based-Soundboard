@@ -19,8 +19,14 @@
 	<div class="customContainer">
 		<div class="row mb-5">
 			{% for sound in sounds %}
-				<div class="p-2 col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-					<button class="btn btn-secondary w-100" onclick="playSound('{{sound}}');">{{sound[:-4]}}</button>
+				<div class="p-2 col-4 col-sm-4 col-md-2 col-lg-2 col-xl-2 square">
+					<button class="btn btn-secondary text-center w-100 h-100 p-0" onclick="playSound('{{sound.path}}');">
+						{% if 'thumbnail' in sound %}
+							<img class="img-fluid" src="/thumbnails/{{sound.thumbnail}}">
+						{% else %}
+							{{sound.name}}
+						{% endif %}
+					</button>
 				</div>
 			{% endfor %}
 		</div>
